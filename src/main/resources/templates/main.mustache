@@ -1,0 +1,32 @@
+<html>
+
+<body>
+    <div>
+        <form action="/logout" method="post">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </div>
+    <h1>Statistic</h1>
+        <div style = "border-style: solid;border-color: cadetblue;">
+        <h2 style="color:blue;margin-left:5px;">Distributed calculation</h2>
+        <h3 style = "margin-left:5px;">Run Time: {{duration}}</h3>
+          <p style = "margin-left:5px;">
+          A country with a maximum number of fires:  {{MaxCountFiresByCountry}} <br/>
+          A country with a minimum number of fires:  {{MinCountFiresByCountry}} <br/>
+          Average number of fires in countries per year:  {{AvgCountFiresByCountry}} <br/>
+          Percentage of causes of fires:  {{PercentCause}} <br/>
+          Maximum fire area:  {{MaxAcresFire}} <br/>
+          Minimum fire area:  {{MinAcresFire}} <br/>
+          <h2 style="color:blue;margin-left:5px;">Parallel calculation</h2>
+          <h3 style = "margin-left:5px;">Run Time: {{duration_parallel1}}</h3>
+          A country with a maximum number of fires:  {{MaxCountFiresByCountry_parallel1}} <br/>
+          A country with a minimum number of fires:  {{MinCountFiresByCountry_parallel1}} <br/>
+          Average number of fires in countries per year:  {{AvgCountFiresByCountry_parallel1}} <br/>
+          Percentage of causes of fires:  {{PercentCause_parallel1}} <br/>
+          Maximum fire area:  {{MaxAcresFire_parallel1}} <br/>
+          Minimum fire area:  {{MinAcresFire_parallel1}} <br/>
+          </p>
+        </div>
+</body>
+</html>
