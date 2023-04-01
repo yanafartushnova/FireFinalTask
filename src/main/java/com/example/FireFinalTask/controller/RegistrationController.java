@@ -3,6 +3,7 @@ package com.example.FireFinalTask.controller;
 import com.example.FireFinalTask.domain.Role;
 import com.example.FireFinalTask.domain.User;
 import com.example.FireFinalTask.repos.UserRepo;
+import com.example.FireFinalTask.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,6 @@ import java.util.Map;
 
 @Controller
 public class RegistrationController {
-    @Autowired
-    private UserRepo userRepo;
 
     @GetMapping("/registration")
     public String registration() {
@@ -23,17 +22,16 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(User user, Map<String, Object> model) {
-        User userFromDb = userRepo.findByUsername(user.getUsername());
+        UserService userService = new UserService();
+        String addRes = userService.addUser(user);
 
-        if (userFromDb != null) {
-            model.put("message", "User exists!");
-            return "registration";
+        if (addRes == ""){
+            return "redirect:/login";
         }
 
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-        userRepo.save(user);
-
-        return "redirect:/login";
+        else {
+            model.put("message", addRes);
+            return "registration";
+        }
     }
 }

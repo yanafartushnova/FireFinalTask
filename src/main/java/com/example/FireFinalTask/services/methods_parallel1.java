@@ -90,13 +90,13 @@ public class methods_parallel1 {
 
 
     public String getAvgCountFiresByCountry_parallel1() throws Exception {
-        List<Callable<CountByCountry>> tasks = new ArrayList<Callable<CountByCountry>>();
+        List<FutureTask<CountByCountry>> result = new ArrayList<FutureTask<CountByCountry>>();
         Set<String> countries = new HashSet<>();
         for (FireItem fire : Fires) {
             String curCountry = fire.getDistrictName();
             if (!countries.contains(curCountry)) {
                 countries.add(curCountry);
-                tasks.add(() -> {
+                FutureTask<CountByCountry> task = new FutureTask<>(() -> {
                     int curCount = 0;
                     List<Integer> years = new ArrayList<>();
                     for (FireItem curFires : Fires) {
@@ -109,52 +109,47 @@ public class methods_parallel1 {
                     }
                     return new CountByCountry(curCountry, curCount/years.size());
                 });
+                result.add(task);
+                ExecutorService exec = Executors.newCachedThreadPool();
+                exec.submit(task);
             }
         }
-        ExecutorService exec = Executors.newCachedThreadPool();
+
         String res = "";
-        try {
-            List<Future<CountByCountry>> result = exec.invokeAll(tasks);
-            for (Future<CountByCountry> i : result) {
+            for (FutureTask<CountByCountry> i : result) {
                 res += i.get().getCountry() + ":   " + i.get().getCount() + ", \n";
             }
-        } finally {
-            exec.shutdown();
-        }
         return res;
     }
 
-    public String getPercentCause_parallel1() throws Exception{
-        List<Callable<CountByCountry>> tasks = new ArrayList<Callable<CountByCountry>>();
+    public String getPercentCause_parallel1() throws Exception {
+        List<FutureTask<CountByCountry>> result = new ArrayList<FutureTask<CountByCountry>>();
         Set<String> causes = new HashSet<>();
         for (FireItem fire : Fires) {
             String curCause = fire.getHumanOrLightning();
-            if (!causes.contains(curCause)){
+            if (!causes.contains(curCause)) {
                 causes.add(curCause);
-                tasks.add(() -> {
+                FutureTask<CountByCountry> task = new FutureTask<>(() -> {
                     int curCount = 0;
                     for (FireItem curFires : Fires) {
                         if (curFires.getHumanOrLightning().equals(curCause)) {
                             curCount += 1;
                         }
                     }
-                    return new CountByCountry(curCause, 100*curCount/Fires.size());
-            });
+                    return new CountByCountry(curCause, 100 * curCount / Fires.size());
+                });
+                result.add(task);
+                ExecutorService exec = Executors.newCachedThreadPool();
+                exec.submit(task);
             }
         }
 
-        ExecutorService exec = Executors.newCachedThreadPool();
         String res = "";
-        try {
-            List<Future<CountByCountry>> result = exec.invokeAll(tasks);
-            for (Future<CountByCountry> i : result) {
-                res += i.get().getCountry() + ":   " + i.get().getCount() + "%" + ", \n";
-            }
-        } finally {
-            exec.shutdown();
+        for (FutureTask<CountByCountry> i : result) {
+            res += i.get().getCountry() + ":   " + i.get().getCount() + "%" + ", \n";
         }
-        return res;
-    }
+            return res;
+        }
 
     public String getMaxAcresFire_parallel1() throws Exception {
         Optional<String_float> result = Fires.parallelStream()
